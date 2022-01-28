@@ -1,38 +1,38 @@
-# Компилятор для подмножества языка Паскаль
+# Compiler for a subset of the Pascal language
 [![License](https://img.shields.io/badge/LICENSE-LGPL%20v2.1-green?style=flat-square)](/LICENSE)  [![Version](https://img.shields.io/badge/VERSION-RELEASE%20--%201.0-green?style=flat-square)](https://github.com/averov90/Pascal-Compiler/releases)
-### :small_orange_diamond: [English version](/README-eng.md)
+### :small_orange_diamond: [Russian version](/README.md)
 
-В данном репозитории представлен лексер и парсер для подмножества языка программирования Pascal. 
-И лексер, и парсер сообщают о синтаксических и лексических соответственно, указывая место в исходном коде (строку и столбец).
+This repository provides a lexer and parser for a subset of the Pascal programming language.
+Both the lexer and the parser report syntactic and lexical, respectively, by indicating the location in the source code (row and column).
 
-Полноценный компилятор состоит из трёх частей (если выполнять деление по уже показанному принципу): *лексер*, *парсер*, *генератор кода*. 
-В данном репозитории представлены только первые 2 компонента. Это оставляет открытым вопрос конечной формы кода, то есть во что будет преобразован код на языке Паскаль в конечном счёте.
+A full-fledged compiler consists of three parts (if you perform division according to the principle already shown): *lexer*, *parser*, *code generator*.
+This repository contains only the first 2 components. This leaves open the question of the final form of the code, that is, what the Pascal code will ultimately be converted to.
 
-После работы, парсер создаёт Абстрактной Синтаксическое Дерево (АСД), которое является представлением логики работы исходной программы.
-Далее АСД можно использовать как угодно: начиная от генерации кода на любом языке (ассемблере, машинном коде, python) и заканчивая исполнением на месте, то есть, интерпретацией.
-В последнем случае получается не компилятор, а интерпретатор.
+After work, the parser creates an Abstract Syntax Tree (AST), which is a representation of the logic of the source program.
+Further, AST can be used in any way: from code generation in any language (assembler, machine code, python) to execution in place, that is, interpretation.
+In the latter case, it turns out not a compiler, but an interpreter.
 
-Все части компилятора (лексер и парсер в данном случае) имеют протокол "общения", который для удобства был сведён к формату JSON. Это позволит при необходимости работать с взаимодействием через сетевые протоколы, что является прямой дорогой к микросервисам.
+All parts of the compiler (lexer and parser in this case) have a "communication" protocol, which has been reduced to JSON format for convenience. This will allow, if necessary, to work with interaction through network protocols, which is a direct path to microservices.
 
-## Поддерживаемые возможности Pascal
+## Supported Pascal features
 
-* распознавание символа program (задание имени программы)
-* объявление глобальных переменных целочисленного типа (integer) в самом верху программы (после точки входа или процедуры глобальные var запрещены)
-* объявление локальныех переменных целочисленного типа (integer) в процедуре
-* поддержка любой вложенности блоков кода begin/end.
-* поддержка циклов for (с поддержкой «to» и «downto»)
-* поддержка циклов while
-* числовые операции бинарные: +, -, \*, / (он же div т.к. нету real), mod, унарный минус
-* логические операции: and, or
-* операторы сравнения: =, >, <, <>, <= и >=
-* неизменяемые (const) var-значения (и локальные и глобальные)
-* процедуры (без возврата значения через return, но с поддержкой возврата значения через аргумент)
-* ключевое слово exit
-* pre-defined процедура writeln
+* program character recognition (setting the program name)
+* declaration of global variables of integer type (integer) at the very top of the program (after an entry point or procedure, global vars are prohibited)
+* declaration of local variables of integer type (integer) in the procedure
+* support for any nesting of begin/end code blocks.
+* support for for loops (with "to" and "downto" support)
+* support for while loops
+* binary numeric operations: +, -, \*, / (aka div because there is no real), mod, unary minus
+* logical operations: and, or
+* comparison operators: =, >, <, <>, <= and >=
+* immutable (const) var-values ​​(both local and global)
+* procedures (without returning a value via return, but with support for returning a value via an argument)
+* exit keyword
+* pre-defined writeln procedure
 
-## Лексер
+## Lexer
 
-Входные данные для работы лексера должны иметь следующий формат:
+The input data for the lexer to work must have the following format:
 ```json
 {
   "session": "id",
@@ -40,10 +40,10 @@
 }
 ```
 
-* **session** - идентификатор сессии, который выдаётся менеджером (может быть использован для идентификации пайплайна обработки кода).
-* **source** - текст (код), который ввёл пользователь в поле ввода кода. В лексер текст передаётся без каких-либо изменений.
+* **session** - session identifier given by the manager (can be used to identify the code processing pipeline).
+* **source** - text (code) entered by the user in the code entry field. The text is passed to the lexer without any changes.
 
-Выходные данные лексера имеют следующий формат:
+The lexer output has the following format:
 ```json
 {
   "success": true,
@@ -54,13 +54,13 @@
 }
 ```
 
-* **success** - true или false - успешность выполнения операции извлечения токенов. Если false, значит произошла ошибка.
-* **errorDesc** - нужно только если success=false - это описание ошибки, например "Встречен неожиданный символ. Ожидался символ ;"
-* **errorLine** - может быть (может и не быть) только если success=false - это номер строки, в которой произошла ошибка. Номер строки должен быть из оригинального текста, а не отфильтрованного текста из лексера.
-* **errorColumn** - может быть (может и не быть) только если success=false - это номер символа в строке, который является ошибкой. Номер символа должен быть из оригинального текста, а не отфильтрованного текста из лексера.
-* **tokens** - должно быть только при success=true - список извлечённых из программы токенов.
+* **success** - true or false - success of the token extraction operation. If false, then an error occurred.
+* **errorDesc** - only needed if success=false is a description of the error, such as "Unexpected character encountered. Expected character ;"
+* **errorLine** - may or may not be present only if success=false is the line number where the error occurred. The line number must be from the original text, not the filtered text from the lexer.
+* **errorColumn** - may be (may not be) only if success=false is the number of the character in the string that is an error. The character number must be from the original text, not filtered text from the lexer.
+* **tokens** - should be only if success=true - a list of tokens retrieved from the program.
 
-Лексер выполняет разделение кода на следующие токены (группы):
+The lexer splits the code into the following tokens (groups):
 * program
 * procedure
 * begin
@@ -88,9 +88,9 @@
 * while
 * do
 
-## Парсер
+## Parser
 
-Входные данные для работы лексера должны иметь следующий формат:
+The input data for the lexer to work must have the following format:
 ```json
 {
   "session": "id",
@@ -98,10 +98,10 @@
 }
 ```
 
-* **session** - идентификатор сессии, который выдаётся менеджером (может быть использован для идентификации пайплайна обработки кода).
-* **tokens** - список токенов.
+* **session** - session identifier given by the manager (can be used to identify the code processing pipeline).
+* **tokens** - list of tokens.
 
-Выходные данные лексера имеют следующий формат:
+The lexer output has the following format:
 ```json
 {
   "success": true,
@@ -113,65 +113,65 @@
 }
 ```
 
-* **success** - true или false - успешность выполнения операции построения синтаксического дерева. Если false, значит произошла ошибка.
-* **errorDesc** - нужно только если success=false - это описание ошибки, например "Попытка изменить значение константы."
-* **errorLine** - может быть (может и не быть) только если success=false - это номер строки, в которой произошла ошибка.
-* **errorColumn** - может быть (может и не быть) только если success=false - это номер символа в строке, который является ошибкой.
-* **variables** - требуется только если success=true - список глобальных переменных, которые используются в программе (с указанием типа). Например: "variables": [ { "name": "someData", "type": "integer", "constValue": null } ]
-* **syntaxTree** - требуется только если success=true - абстрактное синтаксическое дерево (НЕ бинарное), которое имеет рекурсивную структуру.
+* **success** - true or false - success of the syntax tree building operation. If false, then an error occurred.
+* **errorDesc** - only needed if success=false is a description of the error, such as "Attempt to change the value of a constant."
+* **errorLine** - may or may not be present only if success=false is the line number where the error occurred.
+* **errorColumn** - may be (may not be) only if success=false is the number of the character in the string that is an error.
+* **variables** - required only if success=true - a list of global variables that are used in the program (with type indication). For example: "variables": [ { "name": "someData", "type": "integer", "constValue": null } ]
+* **syntaxTree** - only required if success=true is an abstract syntax tree (NOT binary) that has a recursive structure.
 
-### Вложенные узлы дерева
+### Nested tree nodes
 
-Категория 1:
+Category 1:
 ```json
 {
   "type": "operator"
 }
 ```
 
-Категория 2:
+Category 2:
 ```json
 {
   "type": "number"
 }
 ```
 
-Категория 3:
+Category 3:
 ```json
 {
   "type": "boolean"
 }
 ```
 
-Категория 4:
+Category 4:
 ```json
 {
   "type": "call"
 }
 ```
 
-Категория 5:
+Category 5:
 ```json
 {
   "type": "variable"
 }
 ```
 
-Категория 6:
+Category 6:
 ```json
 {
   "type": "for"
 }
 ```
 
-Категория 7:
+Category 7:
 ```json
 {
   "type": "while"
 }
 ```
 
-#### Категория 1 - подробно
+#### Category 1 - detail
 ```json
 {
   "type": "operator",
@@ -306,7 +306,7 @@
 }
 ```
 
-#### Категория 2 - подробно
+#### Category 2 - detail
 ```json
 {
   "type": "number",
@@ -314,7 +314,7 @@
 }
 ```
 
-#### Категория 3 - подробно
+#### Category 3 - detail
 ```json
 {
   "type": "boolean",
@@ -322,20 +322,20 @@
 }
 ```
 
-#### Категория 4 - подробно
+#### Category 4 - detail
 ```json
 {
   "type": "call",
   "function": "",
   "arguments": [
     {
-      <!--Это комментарий. В этом объекте могут попасться только вычислимые значения: арифметический оператор, число или переменная. Даже boolean попасться не может.-->
+      <!--This is a comment. Only computable values can be found in this object: an arithmetic operator, a number, or a variable. Even boolean can't get caught.-->
     }
   ]
 }
 ```
 
-#### Категория 5 - подробно
+#### Category 5 - detail
 ```json
 {
   "type": "variable",
@@ -343,26 +343,26 @@
 }
 ```
 
-#### Категория 6 - подробно
+#### Category 6 - detail
 ```json
 {
   "type": "for",
-  "from": {},   <!--Это комментарий. В этом объекте могут попасться только вычислимые значения: арифметический оператор, число или переменная. Даже boolean попасться не может.-->
-  "to": {},  <!--Это комментарий. В этом объекте могут попасться только вычислимые значения: арифметический оператор, число или переменная. Даже boolean попасться не может.-->
+  "from": {},   <!--This is a comment. Only computable values can be found in this object: an arithmetic operator, a number, or a variable. Even boolean can't get caught.-->
+  "to": {},  <!--This is a comment. Only computable values can be found in this object: an arithmetic operator, a number, or a variable. Even boolean can't get caught.-->
   "ascending": true,
   "body": [
-    {}  <!--Это комментарий. В этом объекте может попасться всё что угодно.-->
+    {}  <!--This is a comment. Anything can be found in this object.-->
   ]
 }
 ```
 
-#### Категория 7 - подробно
+#### Category 7 - detail
 ```json
 {
   "type": "while",
-  "condition": {}, <!--Это комментарий. В этом объекте могут попасться только логические значения: boolean, логический оператор или оператор сравнения.-->
+  "condition": {}, <!--This is a comment. Only logical values can be found in this object: boolean, logical operator, or comparison operator.-->
   "body": [
-    {}  <!--Это комментарий. В этом объекте может попасться всё что угодно.-->
+    {}  <!--This is a comment. Anything can be found in this object.-->
   ]
 }
 ```
@@ -371,7 +371,7 @@
 ```json
 {
   "main": [
-    {} <!--Это комментарий. В этом объекте может попасться всё что угодно.-->
+    {} <!--This is a comment. Anything can be found in this object.-->
   ],
   "procedures": [
     {
@@ -379,25 +379,25 @@
       "arguments": [
         {
           "type": "integer",
-          "name": "", <!--Это имя - одновременно и объявление-->
-          "pointer": true, <!--pointer==true и const==true не могут быть одновременно-->
+          "name": "", <!--This name is also an announcement-->
+          "pointer": true, <!--pointer==true and const==true cannot be at the same time-->
 		  "const": false
         }
       ],
-      "variables": [],  <!--Здесь может быть такое { "name": "", "type": "integer", "constValue": null } -->
+      "variables": [],  <!--Here it could be { "name": "", "type": "integer", "constValue": null } -->
       "body": [
-        {} <!--Это комментарий. В этом объекте может попасться всё что угодно.-->
+        {} <!--This is a comment. Anything can be found in this object.-->
       ]
     }
   ]
 }
 ```
 
-## Примеры
+## Examples
 
-### Пример 1 работы составляющих компилятора
+### Example 1
 
-Исходный код:
+Source:
 ```pascal
 PROGRAM dfg;
 
@@ -417,12 +417,12 @@ BEGIN
 end.
 ```
 
-1. Исходный код нужно поместить в файл с именем `code.pas`
-2. Запустить лексер командой `Compilation.Lexer.exe /pretty`
-На выходе получится файл с именем `code.lex.out` и следующим содержимым:
+1. The source code must be placed in a file named `code.pas`
+2. Run the lexer with the command `Compilation.Lexer.exe /pretty`
+The output will be a file named `code.lex.out` with the following content:
 
 <details>
-  <summary>Содержимое файла code.lex.out</summary>
+  <summary>The contents of the code.lex.out file</summary>
   
 ```json
 {
@@ -923,11 +923,11 @@ end.
 
 </details>
 
-3. Убедиться, что токенизация прошла успешно (в файле поле `success` имеет значение `true`), иначе следует посмотреть сообщение об ошибке и место в коде, вызвавшее ошибку.
-4. Переделать файл содержимое файла `code.lex.out` и поместить в файл `code.lex.in`. Содержимое `code.lex.in` должно быть следующим:
+3. Make sure that the tokenization was successful (the `success` field in the file has the value `true`), otherwise you should look at the error message and the place in the code that caused the error.
+4. Convert the contents of the `code.lex.out` file and place it in the `code.lex.in` file. The content of `code.lex.in` should be:
 
 <details>
-  <summary>Содержимое файла code.lex.in</summary>
+  <summary>The contents of the code.lex.in file</summary>
   
 ```json
 {
@@ -1425,8 +1425,8 @@ end.
 
 </details>
 
-5. Запустить парсер командой `Compilation.Parser.exe /pretty`
-На выходе получится файл с именем `code.parsed.out` и следующим содержимым:
+5. Run the parser with the command `Compilation.Parser.exe /pretty`
+The output will be a file named `code.parsed.out` with the following content:
 ```json
 {
   "success": true,
@@ -1642,12 +1642,12 @@ end.
 }
 ```
 
-6. Убедиться, что парсинг прошёл успешно (в файле поле `success` имеет значение `true`), иначе следует посмотреть сообщение об ошибке и место в коде, вызвавшее ошибку.
-7. Готово!
+6. Make sure that the parsing was successful (the `success` field in the file has the value `true`), otherwise you should look at the error message and the place in the code that caused the error.
+7. Done!
 
-### Пример 2 работы составляющих компилятора
+### Example 2
 
-Исходный код:
+Source:
 ```pascal
 PROGRAM dfg;
 
@@ -1669,12 +1669,12 @@ BEGIN
 end.
 ```
 
-1. Исходный код нужно поместить в файл с именем `code.pas`
-2. Запустить лексер командой `Compilation.Lexer.exe /pretty`
-На выходе получится файл с именем `code.lex.out` и следующим содержимым:
+1. The source code must be placed in a file named `code.pas`
+2. Run the lexer with the command `Compilation.Lexer.exe /pretty`
+The output will be a file named `code.lex.out` with the following content:
 
 <details>
-  <summary>Содержимое файла code.lex.out</summary>
+  <summary>The contents of the code.lex.out file</summary>
 
 ```json
 {
@@ -2187,11 +2187,11 @@ end.
 
 </details>
 
-3. Убедиться, что токенизация прошла успешно (в файле поле `success` имеет значение `true`), иначе следует посмотреть сообщение об ошибке и место в коде, вызвавшее ошибку.
-4. Переделать файл содержимое файла `code.lex.out` и поместить в файл `code.lex.in`. Содержимое `code.lex.in` должно быть следующим:
+3. Make sure that the tokenization was successful (the `success` field in the file has the value `true`), otherwise you should look at the error message and the place in the code that caused the error.
+4. Convert the contents of the `code.lex.out` file and place it in the `code.lex.in` file. The content of `code.lex.in` should be:
 
 <details>
-  <summary>Содержимое файла code.lex.in</summary>
+  <summary>The contents of the code.lex.in file</summary>
 
 ```json
 {
@@ -2701,8 +2701,8 @@ end.
 
 </details>
 
-5. Запустить парсер командой `Compilation.Parser.exe /pretty`
-На выходе получится файл с именем `code.parsed.out` и следующим содержимым:
+5. Run the parser with the command `Compilation.Parser.exe /pretty`
+The output will be a file named `code.parsed.out` with the following content:
 ```json
 {
   "success": true,
@@ -2881,5 +2881,5 @@ end.
 }
 ```
 
-6. Убедиться, что парсинг прошёл успешно (в файле поле `success` имеет значение `true`), иначе следует посмотреть сообщение об ошибке и место в коде, вызвавшее ошибку.
-7. Готово!
+6. Make sure that the parsing was successful (the `success` field in the file has the value `true`), otherwise you should look at the error message and the place in the code that caused the error.
+7. Done!
