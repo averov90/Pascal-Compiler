@@ -3,8 +3,8 @@ using System.Linq;
 
 namespace Compilation.Lexer {
     class Program {
-        static readonly JsonSerializerOptions JSON_SERIZLIZER_OPTIONS = new JsonSerializerOptions(JsonSerializerDefaults.Web) { IncludeFields = true };
-        static readonly JsonSerializerOptions JSON_SERIZLIZER_OPTIONS_PRETTY = new JsonSerializerOptions(JsonSerializerDefaults.Web) { IncludeFields = true, WriteIndented = true };
+        static readonly JsonSerializerOptions JSON_SERIALIZER_OPTIONS = new JsonSerializerOptions(JsonSerializerDefaults.Web) { IncludeFields = true };
+        static readonly JsonSerializerOptions JSON_SERIALIZER_OPTIONS_PRETTY = new JsonSerializerOptions(JsonSerializerDefaults.Web) { IncludeFields = true, WriteIndented = true };
 
 
         static void Main(string[] args) {
@@ -13,7 +13,7 @@ namespace Compilation.Lexer {
             CodeProc processor = new(input_text);
             Output output = processor.Run();
 
-            string output_text = JsonSerializer.Serialize<Output>(output, (args.Any(a => a.ToLower().TrimStart(new char[] { '-', '/' }) == "pretty") ? JSON_SERIZLIZER_OPTIONS_PRETTY : JSON_SERIZLIZER_OPTIONS));
+            string output_text = JsonSerializer.Serialize<Output>(output, (args.Any(a => a.ToLower().TrimStart(new char[] { '-', '/' }) == "pretty") ? JSON_SERIALIZER_OPTIONS_PRETTY : JSON_SERIALIZER_OPTIONS));
 
             System.IO.File.WriteAllText("code.lex.out", output_text);
         }
